@@ -2,7 +2,7 @@ const Ember = window.Ember;
 const { Object: EmberObject, computed, run } = Ember;
 const { oneWay } = computed;
 
-export default EmberObject.extend(Ember.Evented, {
+export default class Port extends EmberObject.extend(Ember.Evented, {
   adapter: oneWay('namespace.adapter').readOnly(),
 
   /**
@@ -25,26 +25,29 @@ export default EmberObject.extend(Ember.Evented, {
     return `${this.get('namespace.applicationId')}__${window.location.href}__${this.get('now')}`;
   }),
 
-  init() {
+}) {
+  constructor() {
+    super();
     this.get('adapter').onMessageReceived(message => {
       if (this.get('uniqueId') === message.applicationId || !message.applicationId) {
         this.messageReceived(message.type, message);
       }
     });
-  },
+  }
 
   messageReceived(name, message) {
     this.wrap(() => {
       this.trigger(name, message);
     });
-  },
+  }
 
   send(messageType, options = {}) {
     options.type = messageType;
     options.from = 'inspectedWindow';
     options.applicationId = this.get('uniqueId');
     this.get('adapter').send(options);
-  },
+  }
+
 
   /**
    * Wrap all code triggered from outside of
@@ -71,4 +74,4 @@ export default EmberObject.extend(Ember.Evented, {
       }
     });
   }
-});
+}

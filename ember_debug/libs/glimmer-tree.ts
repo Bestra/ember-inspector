@@ -31,11 +31,21 @@ import {
   shortControllerName as getShortControllerName,
   shortViewName as getShortViewName
 } from 'ember-debug/utils/name-functions';
+import Controller from '@ember/controller';
+import Component from '@ember/component';
 
 const { Object: EmberObject, typeOf, isNone, Controller, ViewUtils, get, A } = Ember;
 const { getRootViews, getChildViews, getViewBoundingClientRect } = ViewUtils;
 
 export default class {
+
+  options: any;
+  durations: any;
+  owner: any;
+  retainObject: any;
+  highlightRange: any;
+  objectInspector: any;
+  viewRegistry: any;
   /**
    * Sets up the initial options.
    *
@@ -57,7 +67,7 @@ export default class {
     highlightRange,
     objectInspector,
     viewRegistry
-  }) {
+  }: any) {
     this.owner = owner;
     this.retainObject = retainObject;
     this.options = options;
@@ -71,7 +81,7 @@ export default class {
    * @method updateOptions
    * @param {Object} options
    */
-  updateOptions(options) {
+  updateOptions(options: object) {
     this.options = options;
   }
 
@@ -79,8 +89,8 @@ export default class {
    * @method updateDurations
    * @param {Object} durations
    */
-  updateDurations(durations) {
-    this.duations = durations;
+  updateDurations(durations: object) {
+    this.durations = durations;
   }
 
   /**
@@ -111,7 +121,7 @@ export default class {
    * @method build
    * @return {Object}  The view tree
    */
-  build() {
+  build(): object {
     if (this.getRoot()) {
       let outletTree = this.buildOutletTree();
       let componentTrees = this.options.components ? this.buildComponentTrees(outletTree) : [];
@@ -136,7 +146,7 @@ export default class {
    * @method buildOutletTree
    * @return {Object}  Tree of inspected outlets
    */
-  buildOutletTree() {
+  buildOutletTree(): object {
     let outletTree = this.makeOutletTree(this.getApplicationOutlet());
 
     // set root element's id
@@ -163,7 +173,7 @@ export default class {
    * @param  {Object} outletState
    * @return {Object}             The inspected outlet tree
    */
-  makeOutletTree(outletState) {
+  makeOutletTree(outletState: object): object {
     let { render: { controller }, outlets } = outletState;
     let node = { value: this.inspectOutlet(outletState), controller, children: [] };
     for (let key in outlets) {
@@ -190,7 +200,7 @@ export default class {
    * @param  {Object} outletTree
    * @return {Array}  The component tree
    */
-  buildComponentTrees(outletTree) {
+  buildComponentTrees(outletTree: object): Array<any> {
     let controllers = this.controllersFromOutletTree(outletTree);
 
     return controllers.map(controller => {
@@ -224,7 +234,7 @@ export default class {
    * @param  {Controller} controller
    * @return {Array}  Array of inspected components
    */
-  componentsForController(components, controller) {
+  componentsForController(components: Array<any>, controller: Controller): Array<any> {
     let arr = [];
     components.forEach(component => {
       let currentController = this.controllerForComponent(component);
@@ -249,7 +259,7 @@ export default class {
    * @param  {Component} component The parent component
    * @return {Array}  Array of components (children)
    */
-  childComponents(component) {
+  childComponents(component: Component): Array<any> {
     return getChildViews(component);
   }
 
@@ -259,7 +269,7 @@ export default class {
    * @method topComponents
    * @return {Array}  Array of components
    */
-  topComponents() {
+  topComponents(): Array<any> {
     return getRootViews(this.owner);
   }
 
@@ -286,7 +296,7 @@ export default class {
    * @param {Object} outletTree
    * @param {Object} componentTrees
    */
-  addComponentsToOutlets(outletTree, componentTrees) {
+  addComponentsToOutlets(outletTree: object, componentTrees: object) {
     let { value, controller, children } = outletTree;
     children = children.map(child => this.addComponentsToOutlets(child, componentTrees));
     let { components } = A(componentTrees).findBy('controller', controller) || { components: [] };
@@ -299,7 +309,7 @@ export default class {
    * @param  {Controller} inspectedOutlet
    * @return {Array} List of controllers
    */
-  controllersFromOutletTree({ controller, children }) {
+  controllersFromOutletTree({ controller, children }: Controller): Array<any> {
     return [controller].concat(...children.map(this.controllersFromOutletTree.bind(this)));
   }
 
@@ -307,7 +317,7 @@ export default class {
    * @method getRouter
    * @return {Router}
    */
-  getRouter() {
+  getRouter(): Router {
     return this.owner.lookup('router:main');
   }
 
@@ -317,7 +327,7 @@ export default class {
    * @method getRoot
    * @return {OutletView}
    */
-  getRoot() {
+  getRoot(): OutletView {
     return this.getRouter().get('_toplevelView');
   }
 
@@ -326,7 +336,7 @@ export default class {
    *
    * @return {Object} The application outlet state
    */
-  getApplicationOutlet() {
+  getApplicationOutlet(): object {
     // Support multiple paths to outletState for various Ember versions
     const outletState = this.getRoot().outletState || this.getRoot().state.ref.outletState;
     return outletState.outlets.main;
@@ -339,7 +349,7 @@ export default class {
    * @method elementForRoot
    * @return {Element}
    */
-  elementForRoot() {
+  elementForRoot(): Element {
     let renderer = this.owner.lookup('renderer:-dom');
     return renderer._roots && renderer._roots[0] && renderer._roots[0].result && renderer._roots[0].result.firstNode();
   }
@@ -351,7 +361,7 @@ export default class {
    * @param  {Component} component
    * @return {String}              The template name
    */
-  templateForComponent(component) {
+  templateForComponent(component: Component): string {
     let template = component.get('layoutName');
 
     if (!template) {
@@ -376,7 +386,7 @@ export default class {
    * @param  {Object} outlet The outlet state
    * @return {Object}        The inspected outlet
    */
-  inspectOutlet(outlet) {
+  inspectOutlet(outlet: object): object {
     let name = this.nameForOutlet(outlet);
     let template = this.templateForOutlet(outlet);
     let controller = this.controllerForOutlet(outlet);
@@ -403,7 +413,7 @@ export default class {
    * @param  {Controller} controller
    * @return {Object}               The inspected controller.
    */
-  inspectController(controller) {
+  inspectController(controller: Controller): object {
     return {
       name: getShortControllerName(controller),
       completeName: getShortControllerName(controller),
@@ -419,7 +429,7 @@ export default class {
    * @param  {Component} component
    * @return {Object}             The inspected component
    */
-  inspectComponent(component) {
+  inspectComponent(component: Component): object {
     let viewClass = getShortViewName(component);
     let completeViewClass = viewClass;
     let tagName = component.get('tagName');
@@ -456,7 +466,7 @@ export default class {
    * @param  {Component} component
    * @return {Any}            The model property
    */
-  modelForComponent(component) {
+  modelForComponent(component: Component): Any {
     return component.get('model');
   }
 
@@ -468,7 +478,7 @@ export default class {
    * @param  {Any} model
    * @return {Object}       The inspected model.
    */
-  inspectModel(model) {
+  inspectModel(model: any): object {
     if (EmberObject.detectInstance(model) || typeOf(model) === 'array') {
       return {
         name: getShortModelName(model),
@@ -490,7 +500,7 @@ export default class {
    * @param  {Layout} layout
    * @return {String}        The layout's name
    */
-  nameFromLayout(layout) {
+  nameFromLayout(layout: Layout): string {
     let moduleName = layout && get(layout, 'meta.moduleName');
     if (moduleName) {
       return moduleName.replace(/\.hbs$/, '');
@@ -504,7 +514,7 @@ export default class {
    * @param  {Controller} outletState
    * @return {Controller}
    */
-  controllerForOutlet(outletState) {
+  controllerForOutlet(outletState: Controller): Controller {
     return outletState.render.controller;
   }
 
@@ -515,7 +525,7 @@ export default class {
    * @param  {Object} outletState
    * @return {String}
    */
-  nameForOutlet(outletState) {
+  nameForOutlet(outletState: object): string {
     return outletState.render.name;
   }
 
@@ -526,7 +536,7 @@ export default class {
    * @param  {Object} outletState
    * @return {String}             The template name
    */
-  templateForOutlet(outletState) {
+  templateForOutlet(outletState: object): string {
     let template = outletState.render.template;
     return this.nameFromLayout(template);
   }
@@ -540,7 +550,7 @@ export default class {
    * @param  {Component} component
    * @return {Controller}           The target controller.
    */
-  controllerForComponent(component) {
+  controllerForComponent(component: Component): Controller {
     let controller = component.get('_targetObject');
     if (!controller) {
       return null;
@@ -568,7 +578,7 @@ export default class {
    * @param  {Element}  element   The element to highlight
    * @param  {Boolean} isPreview Whether it's a preview or not
    */
-  highlightComponent(component, isPreview = false) {
+  highlightComponent(component, isPreview: boolean = false) {
     let rect = getViewBoundingClientRect(component);
 
     let options = {
@@ -601,7 +611,7 @@ export default class {
    * @method highlightRoot
    * @param  {Boolean} isPreview
    */
-  highlightRoot(isPreview = false) {
+  highlightRoot(isPreview: boolean = false) {
     let applicationOutlet = this.getApplicationOutlet();
     let element = this.elementForRoot();
 
@@ -643,7 +653,7 @@ export default class {
    * @param  {Element} element
    * @return {DOMRect
    */
-  getBoundingClientRect(element) {
+  getBoundingClientRect(element: Element): DOMRect {
     let range = document.createRange();
     range.setStartBefore(element);
     range.setEndAfter(element);
@@ -658,7 +668,7 @@ export default class {
    * @param  {String} elementId
    * @param isPreview
    */
-  highlightIfRoot(elementId, isPreview = false) {
+  highlightIfRoot(elementId: string, isPreview = false) {
     let element = document.getElementById(elementId);
     if (this.isRootElement(element)) {
       this.highlightRoot(isPreview);
@@ -674,7 +684,7 @@ export default class {
    * @param  {String}  elementId         The element to highlight's id
    * @param  {Boolean} [isPreview=false] Preview/Fixed
    */
-  highlightLayer(elementId, isPreview = false) {
+  highlightLayer(elementId: string, isPreview: boolean = false) {
     let component = this.componentById(elementId);
     if (component) {
       this.highlightComponent(component, isPreview);
@@ -690,7 +700,7 @@ export default class {
    * @param  {Element}  element
    * @return {Boolean}
    */
-  isRootElement(element) {
+  isRootElement(element: Element): boolean {
     return this.elementForRoot() === element;
   }
 
@@ -714,7 +724,7 @@ export default class {
    * @param  {Object} outletTree
    * @return {Array}            The array of inspected outlets
    */
-  outletArray(outletTree) {
+  outletArray(outletTree: object): Array<any> {
     if (!outletTree) {
       outletTree = this.buildOutletTree(this.getRoot().outletState);
     }
@@ -729,7 +739,7 @@ export default class {
    * @param  {String} id  The component's guid.
    * @return {Component}  The component.
    */
-  componentById(id) {
+  componentById(id: string): Component {
     return this.viewRegistry[id];
   }
 
@@ -739,7 +749,7 @@ export default class {
    * @param  {Object}  inspectedNodeValue
    * @return {Any}     The inspected node's model (if it has one)
    */
-  modelForViewNodeValue({ isComponent, objectId, name }) {
+  modelForViewNodeValue({ isComponent, objectId, name }: boolean): Any {
     if (isComponent) {
       return this.modelForComponent(this.componentById(objectId));
     } else {

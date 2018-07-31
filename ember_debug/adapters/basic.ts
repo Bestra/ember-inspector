@@ -3,15 +3,9 @@
 const Ember = window.Ember;
 const { A, computed, RSVP, Object: EmberObject } = Ember;
 const { Promise, resolve } = RSVP;
-import { onReady } from '../utils/on-ready';
+import { onReady } from 'ember-debug/utils/on-ready';
 
-export default EmberObject.extend({
-  init() {
-    resolve(this.connect(), 'ember-inspector').then(() => {
-      this.onConnectionReady();
-    }, null, 'ember-inspector');
-  },
-
+export default class extends EmberObject.extend({
   /**
    * Uses the current build's config module to determine
    * the environment.
@@ -23,29 +17,44 @@ export default EmberObject.extend({
     return requireModule('ember-debug/config')['default'].environment;
   }),
 
-  debug() {
-    return console.debug(...arguments);
-  },
+  _messageCallbacks: computed(function() { return A(); }),
+  _isReady: false,
+  _pendingMessages: computed(function() { return A(); }),
 
-  log() {
-    return console.log(...arguments);
-  },
+}) {
+
+  interval: any | null = null;
+
+  constructor() {
+    super();
+    resolve(this.connect(), 'ember-inspector').then(() => {
+      this.onConnectionReady();
+    }, null, 'ember-inspector');
+  }
+
+  debug(...args: any[]) {
+    return console.debug(...args);
+  }
+
+  log(...args: any[]) {
+    return console.log(...args);
+  }
 
   /**
    * A wrapper for `console.warn`.
    *
    * @method warn
    */
-  warn() {
-    return console.warn(...arguments);
-  },
+  warn(...args: any[]) {
+    return console.warn(...args);
+  }
 
   /**
     Used to send messages to EmberExtension
 
     @param {Object} type the message to the send
   */
-  sendMessage(/* options */) {},
+  sendMessage(/* options */) {}
 
   /**
     Register functions to be called
@@ -53,9 +62,9 @@ export default EmberObject.extend({
 
     @param {Function} callback
   */
-  onMessageReceived(callback) {
+  onMessageReceived(callback: any) {
     this.get('_messageCallbacks').pushObject(callback);
-  },
+  }
 
   /**
     Inspect a specific element.  This usually
@@ -68,15 +77,14 @@ export default EmberObject.extend({
 
     @param {DOM Element} elem
   */
-  inspectElement(/* elem */) {},
+  inspectElement(/* elem */) {}
 
-  _messageCallbacks: computed(function() { return A(); }),
 
   _messageReceived(message) {
     this.get('_messageCallbacks').forEach(callback => {
       callback(message);
     });
-  },
+  }
 
   /**
    * Handle an error caused by EmberDebug.
@@ -91,7 +99,7 @@ export default EmberObject.extend({
    * @method handleError
    * @param {Error} error
    */
-  handleError(error) {
+  handleError(error: any) {
     if (this.get('environment') === 'production') {
       if (error && error instanceof Error) {
         error = `Error message: ${error.message}\nStack trace: ${error.stack}`;
@@ -124,15 +132,12 @@ export default EmberObject.extend({
         }, 10);
       });
     }, 'ember-inspector');
-  },
+  }
 
   willDestroy() {
     this._super();
     clearInterval(this.interval);
-  },
-
-  _isReady: false,
-  _pendingMessages: computed(function() { return A(); }),
+  }
 
   send(options) {
     if (this._isReady) {
@@ -153,4 +158,5 @@ export default EmberObject.extend({
     messages.clear();
     this._isReady = true;
   }
-});
+
+}

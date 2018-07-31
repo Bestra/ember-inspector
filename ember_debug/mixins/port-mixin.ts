@@ -1,7 +1,9 @@
+import Port from "ember-debug/port";
+
 const Ember = window.Ember;
 const { Mixin } = Ember;
+
 export default Mixin.create({
-  port: null,
   messages: {},
 
   portNamespace: null,

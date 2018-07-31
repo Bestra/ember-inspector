@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "allowJs": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noEmitOnError": false,
+    "noEmit": false,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "baseUrl": ".",
+    "module": "es6",
+    "paths": {
+      "ember-inspector/tests/*": [
+        "tests/*"
+      ],
+      "ember-inspector/*": [
+        "app/*"
+      ],
+      "ember-debug/*": [
+        "ember_debug/*"
+      ],
+      "*": [
+        "types/*"
+      ]
+    },
+    "experimentalDecorators": true
+  },
+  "include": [
+    "app/**/*.ts",
+    "tests/**/*.ts",
+    "types/**/*.ts",
+    "ember_debug/**/*.ts"
+  ],
+  "exclude": [
+    "ember_debug/vendor/**/*"
+  ]
+}
