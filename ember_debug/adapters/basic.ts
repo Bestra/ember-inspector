@@ -111,7 +111,7 @@ export default class extends EmberObject.extend({
       this.warn('EmberDebug has errored:');
       throw error;
     }
-  },
+  }
 
   /**
 
@@ -145,7 +145,7 @@ export default class extends EmberObject.extend({
     } else {
       this.get('_pendingMessages').push(options);
     }
-  },
+  }
 
   /**
     Called when the connection is set up.

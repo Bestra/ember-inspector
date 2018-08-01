@@ -1,3 +1,6 @@
+import Controller from "@ember/controller";
+import EmberObject from "@ember/object";
+
 /**
  * Returns a medium sized model name. Makes sure it's maximum 50 characters long.
  *
@@ -5,7 +8,7 @@
  * @param  {Any} model
  * @return {String}       The model name.
  */
-export function modelName(model) {
+export function modelName(model: any) {
   let name = '<Unknown model>';
   if (model.toString) {
     name = model.toString();
@@ -24,7 +27,7 @@ export function modelName(model) {
  * @param  {DS.Model} model
  * @return {String}       The concise model name.
  */
-export function shortModelName(model) {
+export function shortModelName(model: any) {
   let name = modelName(model);
   // jj-abrams-resolver adds `app@model:`
   return name.replace(/<[^>]+@model:/g, '<');
@@ -37,7 +40,7 @@ export function shortModelName(model) {
  * @param  {Controller} controller
  * @return {String}            The controller name
  */
-export function controllerName(controller) {
+export function controllerName(controller: Controller) {
   return controller.toString();
 }
 
@@ -48,7 +51,7 @@ export function controllerName(controller) {
  * @param  {Controller} controller
  * @return {String}            The short controller name
  */
-export function shortControllerName(controller) {
+export function shortControllerName(controller: Controller) {
   let name = cleanupInstanceName(controllerName(controller));
   let match = name.match(/^\(generated (.+) controller\)/);
   if (match) {
@@ -65,7 +68,7 @@ export function shortControllerName(controller) {
  * @param  {String} name
  * @return {String} The short/cleaner name
  */
-function cleanupInstanceName(name) {
+function cleanupInstanceName(name: string) {
   let match = name.match(/^.+:(.+)::/);
   if (!match) {
     // Support for Namespace names (instead of module) (for the tests).
@@ -85,7 +88,7 @@ function cleanupInstanceName(name) {
  * @param  {Component} view The component.
  * @return {String}      The short view name.
  */
-export function shortViewName(view) {
+export function shortViewName(view: EmberObject) {
   return cleanupInstanceName(viewName(view));
 }
 
@@ -96,6 +99,6 @@ export function shortViewName(view) {
  * @param  {Component} view The component.
  * @return {String}      The view name.
  */
-export function viewName(view) {
+export function viewName(view: EmberObject) {
   return view.toString();
 }

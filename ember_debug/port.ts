@@ -28,20 +28,20 @@ export default class Port extends EmberObject.extend(Ember.Evented, {
 }) {
   constructor() {
     super();
-    this.get('adapter').onMessageReceived(message => {
+    this.get('adapter').onMessageReceived((message: any) => {
       if (this.get('uniqueId') === message.applicationId || !message.applicationId) {
         this.messageReceived(message.type, message);
       }
     });
   }
 
-  messageReceived(name, message) {
+  messageReceived(name: string, message: any) {
     this.wrap(() => {
       this.trigger(name, message);
     });
   }
 
-  send(messageType, options = {}) {
+  send(messageType: string, options: any = {}) {
     options.type = messageType;
     options.from = 'inspectedWindow';
     options.applicationId = this.get('uniqueId');
@@ -62,10 +62,9 @@ export default class Port extends EmberObject.extend(Ember.Evented, {
    * and displays them in a user friendly manner.
    *
    * @method wrap
-   * @param {Function} fn
-   * @return {Mixed} The return value of the passed function
+   * @return The return value of the passed function
    */
-  wrap(fn) {
+  wrap(fn: any) {
     return run(this, function() {
       try {
         return fn();
