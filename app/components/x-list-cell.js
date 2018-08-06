@@ -122,5 +122,12 @@ export default Component.extend({
    */
   click() {
     this.get('on-click')();
-  }
+  },
+
+  /**
+   * If set, adds a sort indicator to the cell after the yielded content
+   * @property sortStyle
+   * @type {('asc' | 'desc')}
+   */
+  sortDirection: null,
 });

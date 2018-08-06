@@ -178,6 +178,18 @@
   }
 }
 
+// When the header has a row of clickable cells we don't want to underline all the column headers
+// just by hovering on the row
+.list__header {
+  .list__row:hover {
+    .list__cell {
+      &_clickable {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
 
 .list__row_highlight .list__cell,
 .list__cell_highlight  {

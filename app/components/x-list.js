@@ -94,6 +94,20 @@ export default Component.extend({
   columns: readOnly('resizableColumns.columns'),
 
   /**
+   * @property sortByColumn
+   * @type {Column}
+   */
+  sortByColumn: null,
+
+  /**
+   * Used in conjunction with `sortByColumn` to determine how to
+   * sort the table
+   * @property sortDirection
+   * @type {('asc' | 'desc')}
+   */
+  sortDirection: null,
+
+  /**
    * Hook called whenever attributes are updated.
    * We use this to listen to changes to the schema.
    * If the schema changes for an existing `x-list` component
@@ -266,6 +280,37 @@ export default Component.extend({
      */
     didResize(id, width) {
       this.resizableColumns.updateColumnWidth(id, width);
+    },
+
+    /**
+     *
+     * Toggles the sorted column.
+     * Successive clicks on the same column will move between
+     * ascending, descending, and no sorting.
+     * Picking a new column will start sorting by that column in ascending
+     * order
+     * @param {*} column
+     */
+    setColumnSort(column) {
+      let existingTarget = this.get('sortByColumn');
+      let sortDirection = this.get('sortDirection');
+
+      if (existingTarget === column) {
+        if (sortDirection === 'asc') {
+          this.set('sortDirection', 'desc');
+        } else if (sortDirection === 'desc') {
+          this.setProperties({
+            sortByColumn: null,
+            sortDirection: null
+          });
+        }
+
+      } else {
+        this.setProperties({
+          sortByColumn: column,
+          sortDirection: 'asc'
+        });
+      }
     }
   }
 });

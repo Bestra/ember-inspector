@@ -1,6 +1,8 @@
 {{#x-list
   name="record-list"
   schema=schema
+  sortable=true
+  sortChange=(action 'computeSort')
   setIsDragging=(route-action 'setIsDragging')
   storageKey=(concat "record-list-" modelType.name)
   itemClass="list__row_highlight" as |list|}}

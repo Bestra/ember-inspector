@@ -12,7 +12,12 @@
           {{#each columns key="id" as |column|}}
             {{#x-list-cell
               tagName="th"
-              class="js-header-column"}}
+              class="js-header-column"
+              on-click=(action 'setColumnSort' column)
+              sortDirection=sortDirection
+              sortTarget=(eq sortByColumn column)
+              debug=true
+              clickable=true}}
               {{column.name}}
             {{/x-list-cell}}
           {{/each}}
